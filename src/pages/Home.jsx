@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { Table, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 
@@ -152,6 +152,18 @@ function Home() {
     }
     return null;
   };
+  const onChangefile = (e) => {
+    console.log(e.target.files);
+  };
+  const hiddenFileInput = React.useRef(null);
+
+  const handleClick = (event) => {
+    hiddenFileInput.current.click();
+  };
+  const handleChange = (event) => {
+    const fileUploaded = event.target.files[0];
+    console.log(fileUploaded);
+  };
 
   return (
     <div>
@@ -172,6 +184,17 @@ function Home() {
       ) : null}
       <center>
         <h1>Table Products</h1>
+        {/* <label className="custom-file-upload">
+          <input type="file" multiple onChange={onChangefile} />
+          Attach
+        </label> */}
+        {/* <button onClick={handleClick}>Upload a file</button>
+        <input
+          type="file"
+          ref={hiddenFileInput}
+          onChange={handleChange}
+          style={{ display: "none" }}
+        /> */}
         <div className="mx-5">
           <Table striped>
             <thead>

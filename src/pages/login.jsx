@@ -1,9 +1,17 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../helpers/Apiurl";
+import { useDispatch, useSelector } from "react-redux";
 
 const Login = () => {
+  const dispatch = useDispatch();
+
+  const { Auth } = useSelector((state) => {
+    return {
+      Auth: state.AuthReducer,
+    };
+  });
   const [loginData, setloginData] = useState({
     username: "",
     password: "",
@@ -32,12 +40,18 @@ const Login = () => {
       };
       const res = await axios.get(`${API_URL}/auth/login`, options);
       console.log(res.data);
+      localStorage.setItem("token-access", res.data.token);
+      // register otomatis login jadi reduxnya bisa dibikin sama
+      dispatch({ type: "LOGIN", payload: res.data.data });
       alert("berhasil");
     } catch (error) {
       alert(error.response.data.message || "error server");
     }
   };
 
+  if (Auth.isLogin) {
+    return <Redirect to="/" />;
+  }
   return (
     <div className="container-page d-flex justify-content-center align-items-center">
       <div className="container-input py-4 px-3 w-25 shadow">
