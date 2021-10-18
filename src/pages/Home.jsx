@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { Table, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import { API_URL } from "../helpers/Apiurl";
 
 function Home() {
   const [products, setproduct] = useState([]);
@@ -17,6 +18,9 @@ function Home() {
     name: "",
     price: "",
   });
+
+  const [fileAdd, setFile] = useState(null);
+  const [fileEdit, setFileedit] = useState(null);
 
   useEffect(() => {
     const fetchdata = async () => {
@@ -38,6 +42,9 @@ function Home() {
         <tr key={index}>
           <td>{index + 1}</td>
           <td>{val.name}</td>
+          <td width={300}>
+            <img src={API_URL + val.image} alt={val.name} height={200} />
+          </td>
           <td>{val.price}</td>
           <td>
             <button
@@ -81,24 +88,50 @@ function Home() {
   };
 
   const addDataToBe = async () => {
+    const formData = new FormData();
     const dataToBe = addData;
+    formData.append("data", JSON.stringify(dataToBe));
+    formData.append("image", fileAdd);
+    let config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    };
     try {
-      let res = await axios.post(`http://localhost:5000/products`, dataToBe);
+      let res = await axios.post(
+        `http://localhost:5000/products`,
+        formData,
+        config
+      );
       setproduct(res.data);
+      setFile(null);
+      setaddData({
+        name: "",
+        price: "",
+      });
     } catch (error) {
       console.log(error);
     }
   };
   const updateData = async () => {
+    const formData = new FormData();
     const dataEdit = {
       name: EditData.name,
       price: EditData.price,
+    };
+    formData.append("data", JSON.stringify(dataEdit));
+    formData.append("image", fileEdit);
+    let config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     };
     let id = products[indexEdit].id; // id dari products didpat dari indexedit yang dipilih
     try {
       let res = await axios.patch(
         `http://localhost:5000/products/${id}`,
-        dataEdit
+        formData,
+        config
       );
       setproduct(res.data);
       setModalEditopen(false);
@@ -106,6 +139,7 @@ function Home() {
         name: "",
         price: "",
       });
+      setFileedit(null);
     } catch (error) {
       console.log(error);
     }
@@ -134,6 +168,21 @@ function Home() {
               onChange={onEditInputChange}
             />
             <input
+              type="file"
+              className="form-control"
+              onChange={onFileChangeEdit}
+            />
+            {fileEdit ? (
+              <>
+                <img
+                  src={URL.createObjectURL(fileEdit)}
+                  height={200}
+                  width={200}
+                />
+                <button onClick={() => setFileedit(null)}>hapus</button>
+              </>
+            ) : null}
+            <input
               placeholder="edit price"
               className="form-control"
               value={EditData.price}
@@ -152,17 +201,38 @@ function Home() {
     }
     return null;
   };
-  const onChangefile = (e) => {
-    console.log(e.target.files);
-  };
-  const hiddenFileInput = React.useRef(null);
+  // const onChangefile = (e) => {
+  //   console.log(e.target.files);
+  // };
+  // const hiddenFileInput = React.useRef(null);
 
-  const handleClick = (event) => {
-    hiddenFileInput.current.click();
+  // const handleClick = (event) => {
+  //   hiddenFileInput.current.click();
+  // };
+  // const handleChange = (event) => {
+  //   const fileUploaded = event.target.files[0];
+  //   console.log(fileUploaded);
+  // };
+
+  const onFileChange = (e) => {
+    console.log(e.target.files);
+    // isi state file dengan foto dengan menggunakan event.target.files
+    // evennt.target.files adalah array so kita ambil satu saja karena penggennya satu
+    if (e.target.files[0]) {
+      setFile(e.target.files[0]);
+    } else {
+      setFile(null);
+    }
   };
-  const handleChange = (event) => {
-    const fileUploaded = event.target.files[0];
-    console.log(fileUploaded);
+  const onFileChangeEdit = (e) => {
+    console.log(e.target.files);
+    // isi state file dengan foto dengan menggunakan event.target.files
+    // evennt.target.files adalah array so kita ambil satu saja karena penggennya satu
+    if (e.target.files[0]) {
+      setFileedit(e.target.files[0]);
+    } else {
+      setFileedit(null);
+    }
   };
 
   return (
@@ -201,6 +271,7 @@ function Home() {
               <tr>
                 <th>#</th>
                 <th>Name</th>
+                <th>Image</th>
                 <th>price</th>
                 <th>action</th>
               </tr>
@@ -219,6 +290,13 @@ function Home() {
               </td>
               <td>
                 <input
+                  type="file"
+                  className="form-control"
+                  onChange={onFileChange}
+                />
+              </td>
+              <td>
+                <input
                   placeholder="price"
                   className="form-control"
                   name="price"
@@ -233,6 +311,7 @@ function Home() {
               </td>
             </tfoot>
           </Table>
+          {fileAdd ? <img src={URL.createObjectURL(fileAdd)} /> : null}
         </div>
       </center>
     </div>
