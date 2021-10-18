@@ -5,10 +5,12 @@ import "./App.css";
 import Header from "./components/header";
 import { API_URL } from "./helpers/Apiurl";
 import Home from "./pages/Home";
+
 import Login from "./pages/login";
 import Register from "./pages/register";
 import Verified from "./pages/verified";
 import { useDispatch } from "react-redux";
+import Upload from "./pages/upload";
 
 function App() {
   const dispatch = useDispatch();
@@ -37,6 +39,7 @@ function App() {
         <Route path="/register" exact component={Register} />
         <Route path="/login" exact component={Login} />
         <Route path="/verified" exact component={Verified} />
+        <Route path="/upload" exact component={Upload} />
       </Switch>
     </div>
   );
