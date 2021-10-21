@@ -11,6 +11,7 @@ import Register from "./pages/register";
 import Verified from "./pages/verified";
 import { useDispatch } from "react-redux";
 import Upload from "./pages/upload";
+import Chat from "./pages/chat";
 
 function App() {
   const dispatch = useDispatch();
@@ -37,6 +38,7 @@ function App() {
       <Switch>
         <Route path="/" exact component={Home} />
         <Route path="/register" exact component={Register} />
+        <Route path="/chat" exact component={Chat} />
         <Route path="/login" exact component={Login} />
         <Route path="/verified" exact component={Verified} />
         <Route path="/upload" exact component={Upload} />
